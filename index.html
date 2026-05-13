@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>哈夫曼树可视化演示 — 交互式编码方案构建</title>
+    <meta name="description" content="交互式展示哈夫曼树的构建过程与非定长字符编码方案生成，支持自定义字符集、随机生成、逐步动画演示。">
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Favicon（可选） -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🌳</text></svg>">
+</head>
+<body>
+
+    <!-- ==================== Header ==================== -->
+    <header class="site-header">
+        <h1>哈夫曼树可视化演示</h1>
+        <p>交互式展示哈夫曼树的构建过程与非定长字符编码方案生成</p>
+    </header>
+
+    <!-- ==================== 主布局 ==================== -->
+    <div class="main-layout">
+
+        <!-- ---- 左侧栏 ---- -->
+        <aside class="sidebar">
+
+            <!-- 字符频率输入面板 -->
+            <div class="panel">
+                <h2>字符频率设置</h2>
+
+                <div class="btn-group">
+                    <button id="btn-example" class="btn btn-secondary btn-sm">📖 加载示例</button>
+                    <button id="btn-random" class="btn btn-secondary btn-sm">🎲 随机生成</button>
+                    <button id="btn-clear" class="btn btn-secondary btn-sm">🗑️ 清空</button>
+                </div>
+
+                <div class="table-wrap">
+                    <table class="char-table">
+                        <thead>
+                            <tr>
+                                <th style="width:32px">#</th>
+                                <th>字符</th>
+                                <th>频率</th>
+                                <th style="width:36px"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="char-tbody">
+                            <!-- 由 JS 动态填充 -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <button id="btn-add-char" class="btn btn-secondary" style="width:100%">＋ 添加字符</button>
+
+                <button id="btn-build" class="btn btn-primary">▶ 开始构建</button>
+            </div>
+
+            <!-- 播放控制面板（构建后显示） -->
+            <div class="panel" id="control-panel" style="display:none">
+                <h2>播放控制</h2>
+
+                <div class="step-info">
+                    步骤 <strong id="step-current">1</strong> / <strong id="step-total">1</strong>
+                </div>
+
+                <div class="playback-group">
+                    <button id="btn-prev" class="btn btn-secondary">⏮ 上一步</button>
+                    <button id="btn-play" class="btn btn-play">▶ 播放</button>
+                    <button id="btn-next" class="btn btn-secondary">下一步 ⏭</button>
+                </div>
+
+                <div class="speed-row">
+                    <label for="speed-slider">速度</label>
+                    <input type="range" id="speed-slider" class="speed-slider" min="1" max="10" value="5">
+                    <span id="speed-label" class="speed-value">5x</span>
+                </div>
+
+                <button id="btn-reset" class="btn btn-secondary" style="width:100%;margin-bottom:var(--sp-md)">↺ 重置到起始</button>
+
+                <div class="step-desc-box" id="step-description">
+                    等待构建...
+                </div>
+            </div>
+
+        </aside>
+
+        <!-- ---- 可视化主区域 ---- -->
+        <section class="viz-area">
+            <div class="tree-container">
+                <svg id="tree-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+                <div class="placeholder-msg" id="placeholder">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="6" r="3"/>
+                        <line x1="12" y1="9" x2="8" y2="15"/>
+                        <line x1="12" y1="9" x2="16" y2="15"/>
+                        <circle cx="8" cy="18" r="2.5"/>
+                        <circle cx="16" cy="18" r="2.5"/>
+                    </svg>
+                    <p>请设置字符频率后点击「开始构建」<br>查看哈夫曼树的逐步构建过程</p>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- ==================== 结果区域 ==================== -->
+    <div class="results-section">
+        <div class="results-panel" id="results-panel" style="display:none">
+            <h2>编码结果与统计</h2>
+
+            <!-- 统计卡片 -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>定长编码总位数</h3>
+                    <p id="stat-fixed">—</p>
+                </div>
+                <div class="stat-card">
+                    <h3>哈夫曼编码总位数</h3>
+                    <p id="stat-huffman">—</p>
+                </div>
+                <div class="stat-card">
+                    <h3>压缩率</h3>
+                    <p id="stat-compression">—</p>
+                </div>
+                <div class="stat-card">
+                    <h3>平均编码长度</h3>
+                    <p id="stat-avglen">—</p>
+                </div>
+            </div>
+
+            <!-- 编码结果表 -->
+            <div class="result-table-wrap">
+                <table class="result-table">
+                    <thead>
+                        <tr>
+                            <th>字符</th>
+                            <th>频率</th>
+                            <th>哈夫曼编码</th>
+                            <th>编码长度 (bits)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="result-tbody">
+                        <!-- 由 JS 动态填充 -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== Footer ==================== -->
+    <footer class="site-footer">
+        数据结构与算法课程 — 哈夫曼树可视化演示 · 基于 HTML/CSS/JavaScript 构建
+    </footer>
+
+    <!-- ==================== 脚本 ==================== -->
+    <script src="js/huffman.js"></script>
+    <script src="js/visualizer.js"></script>
+    <script src="js/app.js"></script>
+
+</body>
+</html>
