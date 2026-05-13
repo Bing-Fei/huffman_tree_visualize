@@ -2,7 +2,7 @@
 
 > 交互式展示哈夫曼树（Huffman Tree）的构建过程与非定长字符编码方案生成。
 
-在线演示：[https://yourusername.github.io/huffman-visualizer/](https://yourusername.github.io/huffman-visualizer/)
+在线演示：[https://bing-fei.github.io/huffman_tree_visualize/](https://bing-fei.github.io/huffman_tree_visualize/)
 
 ---
 
@@ -21,7 +21,7 @@
 ## 项目架构
 
 ```
-huffman-visualizer/
+huffman_tree_visualize/
 ├── index.html              # 主页面（入口）
 ├── css/
 │   └── style.css           # 全局样式（CSS 变量 + 响应式）
@@ -134,8 +134,8 @@ index.html
 
 1. 克隆仓库：
    ```bash
-   git clone https://github.com/yourusername/huffman-visualizer.git
-   cd huffman-visualizer
+   git clone https://github.com/bing-fei/huffman_tree_visualize.git
+   cd huffman_tree_visualize
    ```
 
 2. 直接在浏览器中打开 `index.html`，或使用本地服务器：
